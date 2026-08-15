@@ -23,10 +23,8 @@ jobs:
       - name: Cleanup old images
         uses: projectbluefin/actions/bootc-build/ghcr-cleanup@8906e13e3ac1654504e75ad27440bffb28e52fbc # v1
         with:
-          # IMPORTANT: Update this to match your image name from Containerfile (# Name: comment)
-          # This should match the "# Name: your-repo-name" comment in your Containerfile
-          # Example: If your Containerfile has "# Name: my-custom-os", use "my-custom-os" here
-          packages: finpilot
+          # Must match the image name from Containerfile (# Name: comment)
+          packages: cvos-cosmic
           older-than: 90 days
           keep-n-tagged: 7
           keep-n-untagged: 7

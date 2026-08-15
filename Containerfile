@@ -1,14 +1,16 @@
 ###############################################################################
 # PROJECT NAME CONFIGURATION
 ###############################################################################
-# Name: finpilot
+# Name: cvos-cosmic
 #
-# IMPORTANT: Change "finpilot" above to your desired project name.
-# This name should be used consistently throughout the repository in:
-#   - Justfile: export IMAGE_NAME := env("IMAGE_NAME", "your-name-here")
-#   - README.md: # your-name-here (title)
-#   - artifacthub-repo.yml: repositoryID: your-name-here
-#   - custom/ujust/README.md: localhost/your-name-here:stable (in bootc switch example)
+# This name is the single source of truth for the image identity and is
+# mirrored consistently throughout the repository in:
+#   - Justfile: export IMAGE_NAME := env("IMAGE_NAME", "cvos-cosmic")
+#   - README.md: # cvOs-cosmic (title)
+#   - artifacthub-repo.yml: repositoryID: cvos-cosmic
+#   - custom/ujust/README.md: localhost/cvos-cosmic:stable (in bootc switch example)
+#   - .github/workflows/clean.yml: packages: cvos-cosmic
+#   - iso/iso.toml: ghcr.io/cvsickle/cvOs-cosmic:stable
 #
 # The project name defined here is the single source of truth for your
 # custom image's identity. When changing it, update all references above
@@ -55,8 +57,8 @@ FROM quay.io/fedora-ostree-desktops/silverblue:44@sha256:1d1810dfd0e3fc41ec3bf2d
 
 # Image identity - these define how bootc, fastfetch, and the ublue ecosystem
 # recognize your image. Change these to match your project name.
-ARG IMAGE_NAME="finpilot"
-ARG IMAGE_VENDOR="projectbluefin"
+ARG IMAGE_NAME="cvos-cosmic"
+ARG IMAGE_VENDOR="cvsickle"
 ARG UBLUE_IMAGE_TAG="stable"
 ARG BASE_IMAGE_NAME="silverblue"
 ARG FEDORA_MAJOR_VERSION="44"

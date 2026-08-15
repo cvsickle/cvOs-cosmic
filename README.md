@@ -1,6 +1,6 @@
-# finpilot
+# cvOs-cosmic
 
-A template for building custom bootc operating system images based on the lessons from [Universal Blue](https://universal-blue.org/) and [Bluefin](https://projectbluefin.io). It is designed to be used manually, but is optimized to be bootstraped by GitHub Copilot. After set up you'll have your own custom Linux.
+A custom bootc operating system image built from the finpilot template, based on the lessons from [Universal Blue](https://universal-blue.org/) and [Bluefin](https://projectbluefin.io). It is designed to be used manually, but is optimized to be bootstraped by GitHub Copilot. After set up you'll have your own custom Linux.
 
 This template uses the **multi-stage build architecture** from @projectbluefin/distroless, combining resources from multiple OCI containers for modularity and maintainability. See the [Architecture](#architecture) section below for details.
 
@@ -12,28 +12,32 @@ Instead, you create your own OS repository based on this template, allowing full
 
 ## What Makes this Raptor Different?
 
-Here are the changes from [Base Image Name]. This image is based on [Bluefin/Bazzite/Aurora/etc] and includes these customizations:
+Here are the changes from the base image. `cvOs-cosmic` is assembled from
+`quay.io/fedora-ostree-desktops/silverblue:44`, layered with
+[`projectbluefin/common`](https://github.com/projectbluefin/common) desktop
+configuration and [`ublue-os/brew`](https://github.com/ublue-os/brew) Homebrew
+integration.
 
 ### Added Packages (Build-time)
 
-- **System packages**: `tmux` and `gum` — tmux is the template's package-manager cache smoke test, and gum provides the interactive prompts used by the default ujust recipes.
+- **System packages**: `tmux` and `gum` — `tmux` doubles as the dnf5 cache smoke test, and `gum` provides the interactive prompts used by the default `ujust` recipes. Defined in `build/10-build.sh`.
 
 ### Added Applications (Runtime)
 
-- **CLI Tools (Homebrew)**: neovim, helix - [brief explanation]
-- **GUI Apps (Flatpak)**: Spotify, Thunderbird - [brief explanation]
+- **CLI Tools (Homebrew)**: _none yet_ — add entries to `custom/brew/default.Brewfile`.
+- **GUI Apps (Flatpak)**: _none yet_ — all entries in `custom/flatpaks/default.preinstall` are still commented out.
 
 ### Removed/Disabled
 
-- List anything removed from base image
+- _Nothing removed from the base image yet._
 
 ### Configuration Changes
 
-- Any systemd services enabled/disabled
-- Desktop environment changes
-- Other notable modifications
+- _No systemd units enabled or disabled yet._
+- **Desktop environment**: currently stock GNOME from Silverblue. The COSMIC desktop script is available but **not yet activated** — enable it by renaming `build/30-cosmic-desktop.sh.example` to `build/30-cosmic-desktop.sh`.
+- Optional example scripts also available (inactive): `build/20-onepassword.sh.example`, `build/40-nvidia.sh.example`.
 
-_Last updated: [date]_
+_Last updated: 2026-08-15_
 
 > Replace the placeholders above with your actual customizations whenever you add or remove packages, apps, or configuration. This section is what tells users how your image differs from the base.
 
