@@ -16,9 +16,9 @@ name: Build and Push Image
 #       - ".github/workflows/*validate*.yml"
 on:
   push:
-    # branches:
-    #   - main
-    #   - stable
+    branches:
+      - main
+      - stable
     paths-ignore:
       - "**.md"
       - ".github/workflows/*validate*.yml"
