@@ -79,4 +79,3 @@ runs:
 
         gh pr edit "${PR_NUMBER}" --repo "${REPO}" --body-file /tmp/updated-pr-body.md
         echo "PR body gate section updated."
-
