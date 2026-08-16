@@ -160,6 +160,14 @@ Important: Change `finpilot` to your repository name in these 7 files:
 
 Your first build will start automatically!
 
+Important: the promotion workflow needs GitHub Actions to create pull requests. In your repository settings, go to:
+
+- Settings → Actions → General → Workflow permissions
+- Enable **"Read and write permissions"**
+- Enable **"Allow GitHub Actions to create and approve pull requests"**
+
+Without that toggle, the workflow in `.github/workflows/promote-main-to-stable.yml` fails with the exact GraphQL error you are seeing.
+
 Note: Image signing is disabled by default. Your images will build successfully without any signing keys. Once you're ready for production, see "Optional: Enable Image Signing" below.
 
 ### 4. Enable Renovate (Required)
