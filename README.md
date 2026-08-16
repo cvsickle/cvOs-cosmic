@@ -47,9 +47,7 @@ integration.
 - **Services enabled**: `podman.socket`, `brew-setup.service`, `brew-update.timer`, `brew-upgrade.timer`.
 - Optional example scripts available (inactive): `build/20-onepassword.sh.example`, `build/40-nvidia.sh.example`.
 
-_Last updated: 2026-08-15_
-
-> Replace the placeholders above with your actual customizations whenever you add or remove packages, apps, or configuration. This section is what tells users how your image differs from the base.
+> _Last updated: 2026-08-15_
 
 ## Guided Copilot Mode
 
@@ -59,7 +57,7 @@ This template works best with **phased prompts** that let Copilot bootstrap your
 
 Use this prompt first to get your fork building:
 
-```
+```text
 Bootstrap a new custom OS from @projectbluefin/finpilot. Name it after this repository. Use the `finpilot-onboarding` skill first, then:
 1. Rename `finpilot` in the 7 required files
 2. Enable GitHub Actions and set RENOVATE_TOKEN (repo + workflow scopes)
@@ -73,7 +71,7 @@ Bootstrap a new custom OS from @projectbluefin/finpilot. Name it after this repo
 
 Once the first build is green, use this prompt to add packages:
 
-```
+```text
 Use the `finpilot-packages` and `finpilot-custom` skills, then:
 1. Add one system package to the image in `build/10-build.sh`
 2. Add one CLI tool to `custom/brew/default.Brewfile`
@@ -88,7 +86,7 @@ Use the `finpilot-packages` and `finpilot-custom` skills, then:
 
 When you are ready for production, use this prompt to harden the setup:
 
-```
+```text
 Use the `finpilot-maintain` and `finpilot-ci` skills, then:
 1. Enable keyless image signing by uncommenting the step in `.github/workflows/build-image.yml`
 2. Verify the cosign command works: cosign verify --certificate-identity-regexp="https://github.com/USER/REPO/.github/workflows/" --certificate-oidc-issuer="https://token.actions.githubusercontent.com" ghcr.io/USER/REPO:stable
