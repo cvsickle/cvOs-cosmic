@@ -164,7 +164,7 @@ jobs:
         if: steps.compare.outputs.sync_needed == 'true'
         id: rebuild
         env:
-          PROMOTION_BRANCH: auto/promote-testing-to-main
+          PROMOTION_BRANCH: auto/promote-${{ inputs.source_branch }}-to-${{ inputs.target_branch }}
           SOURCE_BRANCH: ${{ inputs.source_branch }}
           TARGET_BRANCH: ${{ inputs.target_branch }}
         run: |
@@ -295,7 +295,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           PR_BODY_FILE: ${{ runner.temp }}/promotion-pr-body.md
-          PROMOTION_BRANCH: auto/promote-testing-to-main
+          PROMOTION_BRANCH: auto/promote-${{ inputs.source_branch }}-to-${{ inputs.target_branch }}
           PR_TITLE: ${{ steps.render.outputs.pr_title }}
           TARGET_BRANCH: ${{ inputs.target_branch }}
         run: |
