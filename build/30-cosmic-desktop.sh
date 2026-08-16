@@ -3,21 +3,18 @@
 set -euo pipefail
 
 ###############################################################################
-# Example: Swap GNOME Desktop with COSMIC Desktop
+# Swap GNOME Desktop with COSMIC Desktop
 ###############################################################################
-# This example demonstrates replacing the GNOME desktop environment with
-# System76's COSMIC desktop from their COPR repository.
+# Replaces the GNOME desktop environment shipped by the Silverblue base image
+# with System76's COSMIC desktop from the ryanabx/cosmic-epoch COPR.
 #
-# COSMIC is a new desktop environment built in Rust by System76.
+# COSMIC is a desktop environment built in Rust by System76.
 # https://github.com/pop-os/cosmic-epoch
 #
-# To use this script:
-# 1. Rename to remove .example extension: mv 30-cosmic-desktop.sh.example 30-cosmic-desktop.sh
-# 2. Add an explicit RUN block for /ctx/build/30-cosmic-desktop.sh after
-#    10-build.sh in Containerfile. See build/README.md for the standard block.
+# Invoked from Containerfile via the standard RUN block documented in
+# build/README.md, after 10-build.sh.
 #
-# WARNING: This removes GNOME and replaces it with COSMIC. Only use this if
-# you want COSMIC as your desktop environment instead of GNOME.
+# WARNING: This removes GNOME. The image will only provide COSMIC.
 ###############################################################################
 
 # Source helper functions
@@ -29,7 +26,7 @@ echo "::group:: Remove GNOME Desktop"
 # Remove GNOME Shell and related packages
 dnf5 remove -y \
     gnome-shell \
-    gnome-shell-extension* \
+    "gnome-shell-extension*" \
     gnome-terminal \
     gnome-software \
     gnome-control-center \
@@ -61,19 +58,18 @@ echo "::endgroup::"
 
 echo "::group:: Configure Display Manager"
 
-# Enable cosmic-greeter (COSMIC's display manager)
-systemctl enable cosmic-greeter
+# Enable cosmic-greeter (COSMIC's display manager).
+# Use the full unit name and set it as the graphical default target's display
+# manager, matching how gdm.service was wired up in the base image.
+systemctl enable cosmic-greeter.service
+systemctl set-default graphical.target
 
-# Set COSMIC as default session
-mkdir -p /etc/X11/sessions
-cat >/etc/X11/sessions/cosmic.desktop <<'COSMICDESKTOP'
-[Desktop Entry]
-Name=COSMIC
-Comment=COSMIC Desktop Environment
-Exec=cosmic-session
-Type=Application
-DesktopNames=COSMIC
-COSMICDESKTOP
+# The COSMIC session entry (/usr/share/wayland-sessions/cosmic.desktop) is
+# shipped by the cosmic-session package -- do not hand-write one.
+if [[ ! -f /usr/share/wayland-sessions/cosmic.desktop ]]; then
+    echo "ERROR: cosmic-session did not install a wayland session file"
+    exit 1
+fi
 
 echo "Display manager configured"
 echo "::endgroup::"

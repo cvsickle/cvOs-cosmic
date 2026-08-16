@@ -89,6 +89,14 @@ RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
     --mount=type=tmpfs,dst=/tmp \
     /ctx/build/10-build.sh
 
+# Replace GNOME with COSMIC Desktop.
+RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
+    --mount=type=cache,dst=/var/cache/libdnf5 \
+    --mount=type=cache,dst=/var/cache/rpm-ostree \
+    --mount=type=tmpfs,dst=/boot \
+    --mount=type=tmpfs,dst=/tmp \
+    /ctx/build/30-cosmic-desktop.sh
+
 ### CLEANUP
 ## Use Bluefin's clean-stage.sh to remove build artifacts before linting.
 ## /run is deliberately not mounted as tmpfs here: clean-stage.sh must remove
@@ -100,12 +108,10 @@ RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
     /ctx/build/clean-stage.sh
 
 ### /opt
-## Makes /opt writeable by default. Needs to be here to make the main image
-## build strict (no /opt there). This is for downstream images/stuff like k0s.
-## If you need /opt as an immutable real directory for build-time packages
-## (e.g. google-chrome, docker-desktop), replace the next line with:
-##   RUN rm /opt && mkdir /opt
-RUN rm -rf /opt && ln -s /var/opt /opt
+## Helium is installed under /opt/helium, so keep /opt as a real directory in
+## this image instead of a symlink. This is also the safe pattern for other
+## build-time packages that need a writable /opt at install time.
+RUN rm -rf /opt && mkdir -p /opt
 
 ### INIT
 ## Required for bootc images
