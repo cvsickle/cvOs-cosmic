@@ -123,19 +123,27 @@ jobs:
       - name: Build image
         if: steps.detect-changes.outputs.should_build == 'true' || github.event_name != 'pull_request'
         id: build-image
-        uses: nick-fields/retry@ad984534de44a9489a53aefd81eb77f87c70dc60 # v4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           IMAGE_NAME: ${{ env.IMAGE_NAME }}
           IMAGE_VENDOR: ${{ env.IMAGE_VENDOR }}
           DEFAULT_TAG: ${{ env.DEFAULT_TAG }}
           REGISTRY_CACHE_WRITE: ${{ env.REGISTRY_CACHE_WRITE }}
-        with:
-          timeout_minutes: 120
-          max_attempts: 3
-          retry_wait_seconds: 300
-          command: |
-            sudo -E "$(command -v just)" build "${IMAGE_NAME}" "${DEFAULT_TAG}"
+        shell: bash
+        run: |
+          set -uo pipefail
+          for attempt in 1 2 3; do
+            echo "Build attempt ${attempt}/3"
+            if sudo -E "$(command -v just)" build "${IMAGE_NAME}" "${DEFAULT_TAG}"; then
+              exit 0
+            fi
+            if [[ "${attempt}" -lt 3 ]]; then
+              echo "Build failed; retrying in 60 seconds"
+              sleep 60
+            else
+              exit 1
+            fi
+          done
 
       - name: Get version label
         if: steps.detect-changes.outputs.should_build == 'true' || github.event_name != 'pull_request'
