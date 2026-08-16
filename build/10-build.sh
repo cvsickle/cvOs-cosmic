@@ -45,6 +45,15 @@ echo "::group:: Install Packages"
 # gum is required by the default ujust recipes for interactive prompts.
 dnf5 install -y tmux gum
 
+# Helium installs to /opt/helium and requires a real /opt directory during RPM
+# unpacking. Some bootc base images already provide /opt as a symlink, so ensure
+# it is converted back to a regular directory before the isolated COPR install.
+rm -rf /opt && mkdir -p /opt
+
+# Helium browser from the imput/helium COPR.
+# Uses the isolated pattern so the COPR does not persist into the final image.
+copr_install_isolated "imput/helium" helium-bin
+
 # Example using COPR with isolated pattern:
 # copr_install_isolated "ublue-os/staging" package-name
 

@@ -79,3 +79,26 @@ install-vscode:
 [group('Apps')]
 install-gimp:
     ujust install-flatpak org.gimp.GIMP
+
+# Install Zen Browser via Flatpak
+[group('Apps')]
+install-zen-browser:
+    ujust install-flatpak app.zen_browser.zen
+
+# Install Neovim via Homebrew
+[group('Apps')]
+install-neovim:
+    #!/usr/bin/env bash
+    echo "Installing Neovim via Homebrew..."
+    brew install neovim
+
+# Launch Helium browser (installed at build time from the imput/helium COPR)
+[group('Apps')]
+helium:
+    #!/usr/bin/env bash
+    if ! command -v helium >/dev/null 2>&1; then
+        echo "Helium is not present in this image."
+        exit 1
+    fi
+    helium &
+    disown

@@ -24,6 +24,13 @@ jobs:
           find "custom/brew" -iname '*\.Brewfile*' -print0 | \
             while IFS= read -r -d '' brewfile ; do
               echo "::group:: ===$(basename "$brewfile")==="
+              if brew bundle install --file="$brewfile" 2>&1; then
+                echo "✓ $brewfile installed successfully"
+              else
+                echo "✗ $brewfile installation failed"
+                exit 1
+              fi
+
               if brew bundle check --file="$brewfile" 2>&1; then
                 echo "✓ $brewfile is valid"
               else
