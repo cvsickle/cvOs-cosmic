@@ -39,6 +39,7 @@ description: >-
 | Build fails: "base image not found"    | Invalid `FROM` line or digest mismatch                                       | Check Containerfile syntax, verify base image tag and digest                                |
 | Build fails: "shellcheck error"        | Script syntax error in `build/*.sh`                                          | Run `shellcheck build/*.sh` locally, fix errors                                             |
 | `bootc container lint` fails           | Missing cleanup, leftover artifacts, or invalid image structure              | Run `build/clean-stage.sh` manually, check for stray files in `/opt` or `/var`              |
+| Package install fails: `cpio: mkdir failed` | RPM expects a real `/opt` directory for packages like `helium-bin`      | Before COPR installs, `rm -rf /opt && mkdir -p /opt`; keep `/opt` as a real dir in the final image if the package installs there |
 | Podman/Docker not found                | Container runtime not installed                                              | Install `podman` or `docker`, ensure daemon is running                                      |
 | Base image pull fails                  | Network issue or invalid digest                                              | Verify network, check digest is correct, try `podman pull <base-image>` manually            |
 | Multi-stage build fails at `ctx` stage | Missing `COPY --from=` or invalid OCI image reference                        | Verify OCI image names and digests in `Containerfile` ctx stage                             |
