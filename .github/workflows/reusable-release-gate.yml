@@ -10,12 +10,12 @@ on:
       pr_number:
         description: PR number to post status on (overrides event context; required for workflow_dispatch callers)
         required: false
-        default: ''
+        default: ""
         type: string
       head_sha:
         description: PR head SHA for e2e lookup (overrides event context; required for workflow_dispatch callers)
         required: false
-        default: ''
+        default: ""
         type: string
       registry:
         description: GHCR registry prefix
@@ -48,7 +48,7 @@ on:
       e2e_image:
         description: Full image ref associated with the e2e gate; if empty, e2e is skipped
         required: false
-        default: ''
+        default: ""
         type: string
       e2e_stale_after_minutes:
         description: How old the latest relevant e2e run can be before the gate re-dispatches it
@@ -360,7 +360,6 @@ jobs:
             } >> "$GITHUB_OUTPUT"
           fi
 
-
       - name: Aggregate gate result
         id: aggregate
         shell: bash
@@ -376,19 +375,19 @@ jobs:
 
       - name: Update PR body gate section
         if: inputs.pr_number != ''
-        uses: $/.github/actions/render-gate-section
+        uses: ./.github/actions/render-gate-section
         with:
-          gh_token:        ${{ github.token }}
-          repo:            ${{ inputs.repo }}
-          pr_number:       ${{ inputs.pr_number }}
-          resolve_ok:      ${{ steps.resolve.outputs.ok }}
+          gh_token: ${{ github.token }}
+          repo: ${{ inputs.repo }}
+          pr_number: ${{ inputs.pr_number }}
+          resolve_ok: ${{ steps.resolve.outputs.ok }}
           resolve_summary: ${{ steps.resolve.outputs.summary }}
-          verify_ok:       ${{ steps.verify.outputs.ok }}
-          verify_summary:  ${{ steps.verify.outputs.summary }}
-          e2e_state:       ${{ steps.e2e.outputs.state }}
-          e2e_summary:     ${{ steps.e2e.outputs.summary }}
-          e2e_details:     ${{ steps.e2e.outputs.details }}
-          ready:           ${{ steps.aggregate.outputs.ready }}
+          verify_ok: ${{ steps.verify.outputs.ok }}
+          verify_summary: ${{ steps.verify.outputs.summary }}
+          e2e_state: ${{ steps.e2e.outputs.state }}
+          e2e_summary: ${{ steps.e2e.outputs.summary }}
+          e2e_details: ${{ steps.e2e.outputs.details }}
+          ready: ${{ steps.aggregate.outputs.ready }}
 
       - name: Set release readiness label
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
