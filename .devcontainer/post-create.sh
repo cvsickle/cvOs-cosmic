@@ -24,6 +24,7 @@ sudo apt-get install -y --no-install-recommends \
 	coreutils \
 	curl \
 	findutils \
+	gh \
 	gnupg \
 	iproute2 \
 	jq \
@@ -31,6 +32,7 @@ sudo apt-get install -y --no-install-recommends \
 	rsync \
 	sed \
 	shellcheck \
+	skopeo \
 	tar \
 	unzip \
 	wget \
@@ -93,7 +95,7 @@ sudo chmod +x /usr/local/bin/cosign
 log "Verifying toolchain"
 failed=0
 for tool in bash git gh jq just shellcheck shfmt hadolint \
-	actionlint cosign markdownlint prettier renovate-config-validator python3 \
+	actionlint cosign skopeo markdownlint prettier renovate-config-validator python3 \
 	curl wget rsync ss xdg-open; do
 	if command -v "${tool}" >/dev/null 2>&1; then
 		printf '  ok   %s\n' "${tool}"
