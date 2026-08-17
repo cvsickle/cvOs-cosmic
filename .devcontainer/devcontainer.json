@@ -1,0 +1,44 @@
+{
+  "name": "cvOs-cosmic (finpilot bootc template)",
+  "runArgs": [
+    "--name=finpilot-tools"
+  ],
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu-24.04",
+  "features": {
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "installZsh": true,
+      "configureZshAsDefaultShell": false,
+      "upgradePackages": true
+    },
+    "ghcr.io/devcontainers/features/git:1": {},
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.14",
+      "installTools": false
+    },
+    "ghcr.io/devcontainers/features/node:2": {
+      "version": "lts"
+    }
+  },
+  "onCreateCommand": "bash .devcontainer/post-create.sh",
+  "remoteUser": "vscode",
+  "privileged": true,
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "timonwong.shellcheck",
+        "foxundermoon.shell-format",
+        "exiasr.hadolint",
+        "redhat.vscode-yaml",
+        "nefrob.vscode-just-syntax",
+        "DavidAnson.vscode-markdownlint",
+        "GitHub.vscode-github-actions",
+        "ms-python.python"
+      ],
+      "settings": {
+        "shellcheck.enable": true,
+        "editor.formatOnSave": true
+      }
+    }
+  }
+}

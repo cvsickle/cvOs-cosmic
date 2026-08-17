@@ -1,3 +1,6 @@
 # Default Brewfile for finpilot
 # Uncomment packages you want to install, or add your own.
 # Users install via: ujust install-default-apps
+
+# Neovim - hyperextensible Vim-based text editor (provides the `nvim` command)
+brew "neovim"
