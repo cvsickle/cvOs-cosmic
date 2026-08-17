@@ -38,8 +38,8 @@
 
 # OCI context images - imported below and pinned directly in their FROM lines.
 # The base image is pinned in the FROM line below and updated by Renovate.
-FROM ghcr.io/projectbluefin/common:latest@sha256:df2fa93dac84cda91d568bd694e5051abbbdba37bf3d54a6cc15cdc80e645e2c AS common
-FROM ghcr.io/ublue-os/brew:latest@sha256:5c5b6dea4b9faaab4d6fa81d7fc4f37f218c8a75a0839c72ae70b268bfdf4b0f AS brew
+FROM ghcr.io/projectbluefin/common:latest@sha256:1ef7b2bf7637c6e1724b0e4a1533b2d2aab6f8ca029a763ce421ca80ecef9284 AS common
+FROM ghcr.io/ublue-os/brew:latest@sha256:8f952ae54585db9f855a306ef365e13609ed7c7944b12b823ba7d5ce8e1a145b AS brew
 
 # Context stage - combine local and imported OCI container resources
 FROM scratch AS ctx
@@ -53,7 +53,7 @@ COPY --from=brew /system_files /oci/brew
 
 # Base Image - GNOME included (Fedora official OSTree desktop)
 # Renovate will keep the digest pin up to date.
-FROM quay.io/fedora-ostree-desktops/silverblue:44@sha256:1d1810dfd0e3fc41ec3bf2d6430963e9dda644e78472bae2005fca57c035201a
+FROM quay.io/fedora-ostree-desktops/silverblue:44@sha256:4065cc28eff3c7a481a73439ee68733ad9ed22e148166b115c0bd042c134f20d
 
 # Image identity - these define how bootc, fastfetch, and the ublue ecosystem
 # recognize your image. Change these to match your project name.
@@ -89,6 +89,14 @@ RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
     --mount=type=tmpfs,dst=/tmp \
     /ctx/build/10-build.sh
 
+# Replace GNOME with COSMIC Desktop.
+RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
+    --mount=type=cache,dst=/var/cache/libdnf5 \
+    --mount=type=cache,dst=/var/cache/rpm-ostree \
+    --mount=type=tmpfs,dst=/boot \
+    --mount=type=tmpfs,dst=/tmp \
+    /ctx/build/30-cosmic-desktop.sh
+
 ### CLEANUP
 ## Use Bluefin's clean-stage.sh to remove build artifacts before linting.
 ## /run is deliberately not mounted as tmpfs here: clean-stage.sh must remove
@@ -100,12 +108,10 @@ RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
     /ctx/build/clean-stage.sh
 
 ### /opt
-## Makes /opt writeable by default. Needs to be here to make the main image
-## build strict (no /opt there). This is for downstream images/stuff like k0s.
-## If you need /opt as an immutable real directory for build-time packages
-## (e.g. google-chrome, docker-desktop), replace the next line with:
-##   RUN rm /opt && mkdir /opt
-RUN rm -rf /opt && ln -s /var/opt /opt
+## Helium is installed under /opt/helium, so keep /opt as a real directory in
+## this image instead of a symlink. This is also the safe pattern for other
+## build-time packages that need a writable /opt at install time.
+RUN rm -rf /opt && mkdir -p /opt
 
 ### INIT
 ## Required for bootc images

@@ -21,25 +21,33 @@ integration.
 ### Added Packages (Build-time)
 
 - **System packages**: `tmux` and `gum` — `tmux` doubles as the dnf5 cache smoke test, and `gum` provides the interactive prompts used by the default `ujust` recipes. Defined in `build/10-build.sh`.
+- **Helium browser** (`helium-bin`) — installed from the `imput/helium` COPR using the isolated pattern, so the COPR is disabled and removed after installation. Defined in `build/10-build.sh`.
+- **COSMIC desktop** — `cosmic-session`, `cosmic-greeter`, `cosmic-comp`, and the rest of the COSMIC stack from the `ryanabx/cosmic-epoch` COPR, plus `kitty`, `flatpak`, and `xdg-desktop-portal-cosmic`. Defined in `build/30-cosmic-desktop.sh`.
 
 ### Added Applications (Runtime)
 
-- **CLI Tools (Homebrew)**: _none yet_ — add entries to `custom/brew/default.Brewfile`.
-- **GUI Apps (Flatpak)**: _none yet_ — all entries in `custom/flatpaks/default.preinstall` are still commented out.
+- **CLI Tools (Homebrew)**: `neovim` (the `nvim` editor) — listed in `custom/brew/default.Brewfile`, installed with `ujust install-default-apps` or `ujust install-neovim`.
+- **GUI Apps (Flatpak)**: **Zen Browser** (`app.zen_browser.zen`) — preinstalled on first boot via `custom/flatpaks/default.preinstall`, or on demand with `ujust install-zen-browser`.
+
+### ujust Shortcuts
+
+| Command                    | Does                                            |
+| -------------------------- | ----------------------------------------------- |
+| `ujust install-neovim`     | Installs Neovim (`nvim`) via Homebrew           |
+| `ujust install-zen-browser`| Installs Zen Browser from Flathub               |
+| `ujust helium`             | Launches the build-time installed Helium browser|
 
 ### Removed/Disabled
 
-- _Nothing removed from the base image yet._
+- **GNOME desktop** — `gnome-shell`, GNOME extensions, `gnome-terminal`, `gnome-software`, `gnome-control-center`, `nautilus`, and `gdm` are removed from the Silverblue base by `build/30-cosmic-desktop.sh`.
 
 ### Configuration Changes
 
-- _No systemd units enabled or disabled yet._
-- **Desktop environment**: currently stock GNOME from Silverblue. The COSMIC desktop script is available but **not yet activated** — enable it by renaming `build/30-cosmic-desktop.sh.example` to `build/30-cosmic-desktop.sh`.
-- Optional example scripts also available (inactive): `build/20-onepassword.sh.example`, `build/40-nvidia.sh.example`.
+- **Desktop environment**: GNOME is replaced with **COSMIC**. `cosmic-greeter.service` is enabled and `graphical.target` is set as the default; select the **COSMIC** session at the login screen.
+- **Services enabled**: `podman.socket`, `brew-setup.service`, `brew-update.timer`, `brew-upgrade.timer`.
+- Optional example scripts available (inactive): `build/20-onepassword.sh.example`, `build/40-nvidia.sh.example`.
 
-_Last updated: 2026-08-15_
-
-> Replace the placeholders above with your actual customizations whenever you add or remove packages, apps, or configuration. This section is what tells users how your image differs from the base.
+> _Last updated: 2026-08-15_
 
 ## Guided Copilot Mode
 
@@ -49,7 +57,7 @@ This template works best with **phased prompts** that let Copilot bootstrap your
 
 Use this prompt first to get your fork building:
 
-```
+```text
 Bootstrap a new custom OS from @projectbluefin/finpilot. Name it after this repository. Use the `finpilot-onboarding` skill first, then:
 1. Rename `finpilot` in the 7 required files
 2. Enable GitHub Actions and set RENOVATE_TOKEN (repo + workflow scopes)
@@ -63,7 +71,7 @@ Bootstrap a new custom OS from @projectbluefin/finpilot. Name it after this repo
 
 Once the first build is green, use this prompt to add packages:
 
-```
+```text
 Use the `finpilot-packages` and `finpilot-custom` skills, then:
 1. Add one system package to the image in `build/10-build.sh`
 2. Add one CLI tool to `custom/brew/default.Brewfile`
@@ -78,7 +86,7 @@ Use the `finpilot-packages` and `finpilot-custom` skills, then:
 
 When you are ready for production, use this prompt to harden the setup:
 
-```
+```text
 Use the `finpilot-maintain` and `finpilot-ci` skills, then:
 1. Enable keyless image signing by uncommenting the step in `.github/workflows/build-image.yml`
 2. Verify the cosign command works: cosign verify --certificate-identity-regexp="https://github.com/USER/REPO/.github/workflows/" --certificate-oidc-issuer="https://token.actions.githubusercontent.com" ghcr.io/USER/REPO:stable
@@ -151,6 +159,14 @@ Important: Change `finpilot` to your repository name in these 7 files:
 - Click "I understand my workflows, go ahead and enable them"
 
 Your first build will start automatically!
+
+Important: the promotion workflow needs GitHub Actions to create pull requests. In your repository settings, go to:
+
+- Settings → Actions → General → Workflow permissions
+- Enable **"Read and write permissions"**
+- Enable **"Allow GitHub Actions to create and approve pull requests"**
+
+Without that toggle, the workflow in `.github/workflows/promote-main-to-stable.yml` fails with the exact GraphQL error you are seeing.
 
 Note: Image signing is disabled by default. Your images will build successfully without any signing keys. Once you're ready for production, see "Optional: Enable Image Signing" below.
 

@@ -77,8 +77,11 @@ ujust install-fonts
 ### Validation
 
 - **PR trigger**: `validate-brewfiles.yml` runs on PRs that touch `custom/brew/**`
-- **Local check**: `brew bundle check --file /path/to/Brewfile`
+- **Fresh environment check**: `brew bundle install --file /path/to/Brewfile` followed by `brew bundle check --file /path/to/Brewfile`
+- **Local check after install**: `brew bundle check --file /path/to/Brewfile`
 - **List what would install**: `brew bundle list --file /path/to/Brewfile`
+
+> `brew bundle check` validates the current Homebrew state. On a clean machine, install the bundle first so the command reflects a satisfied dependency graph rather than an uninitialized environment.
 
 ## Flatpaks: `custom/flatpaks/*.preinstall`
 
